@@ -1,7 +1,5 @@
-
-
 import { Page, Locator } from '@playwright/test';
-import type { LoginCredentials } from '../../../types'; 
+import type { LoginCredentials } from '../../../types';
 
 export class LoginPage {
   private readonly page: Page;
@@ -15,12 +13,24 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
+
     this.usernameInput = page.getByRole('textbox', { name: 'Username' });
     this.passwordInput = page.getByRole('textbox', { name: 'Password' });
-    this.loginButton   = page.getByRole('button',  { name: 'Login' });
+    this.loginButton   = page.getByRole('button', { name: 'Login' });
+
     this.errorAlert    = page.getByText('Invalid credentials');
-    this.usernameError = page.getByText('Required').first();
-    this.passwordError = page.getByText('Required').last();
+
+    // ✅ FIXED: no more first()/last(), now scoped to each field
+    this.usernameError = page
+      .locator('.oxd-input-group')
+      .filter({ has: page.getByRole('textbox', { name: 'Username' }) })
+      .getByText('Required');
+
+    this.passwordError = page
+      .locator('.oxd-input-group')
+      .filter({ has: page.getByRole('textbox', { name: 'Password' }) })
+      .getByText('Required');
+
     this.pageHeading   = page.getByRole('heading', { name: 'Login' });
   }
 
