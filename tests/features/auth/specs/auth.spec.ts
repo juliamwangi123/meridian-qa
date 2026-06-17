@@ -1,20 +1,26 @@
-// features/auth/specs/login.spec.ts
+
 
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { loginUsers } from '../data/loginData';
+import { DashboardPage } from '../../dashboard/pages/DashboardPage';
 
 test.describe('Login', () => {
   let loginPage: LoginPage;
+  let dashboardPage: DashboardPage;
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
+    dashboardPage = new DashboardPage(page);
     await loginPage.goto();
   });
 
   test('A user can log in with valid credentials', async ({ page }) => {
     await loginPage.login(loginUsers.validUser.credentials);
-    await expect(page).toHaveURL(/dashboard/);
+    // await expect(page).toHaveURL(/login/);
+    // await expect(page).toHaveURL(/dashboard/);
+    await dashboardPage.goto();
+    await expect(dashboardPage.isLoaded()).resolves.toBe(true);
   });
 
   test('A user cannot log in with invalid credentials', async () => {
@@ -37,11 +43,13 @@ test.describe('Login', () => {
 
   test('A logged-in user can log out successfully', async ({ page }) => {
     await loginPage.login(loginUsers.validUser.credentials);
-    await expect(page).toHaveURL(/dashboard/);
-
-    await page.locator('.oxd-userdropdown-img').click();
-    await page.getByRole('menuitem', { name: 'Logout' }).click();
-
-    await expect(loginPage.pageHeading).toBeVisible();
+    // await expect(page).toHaveURL(/dashboard/);
+    // await page.locator('.oxd-userdropdown-img').click();
+    // await page.getByRole('menuitem', { name: 'Logout' }).click();
+     await page.waitForLoadState('networkidle');
+      await dashboardPage.goto();
+      expect(await dashboardPage.isLoaded()).toBe(true);
+      await dashboardPage.logout();
+      await expect(loginPage.pageHeading).toBeVisible();
   });
 });

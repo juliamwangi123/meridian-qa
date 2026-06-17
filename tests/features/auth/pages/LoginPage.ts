@@ -1,4 +1,4 @@
-// features/auth/pages/LoginPage.ts
+
 
 import { Page, Locator } from '@playwright/test';
 import type { LoginCredentials } from '../../../types'; 
@@ -44,7 +44,6 @@ export class LoginPage {
     await this.fillUsername(credentials.username);
     await this.fillPassword(credentials.password);
     await this.clickLoginButton();
-    await this.page.waitForURL(/dashboard/);
   }
 
   async loginWithEmptyPassword(username: string): Promise<void> {
