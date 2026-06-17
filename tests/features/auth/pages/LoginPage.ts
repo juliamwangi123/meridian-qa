@@ -44,6 +44,7 @@ export class LoginPage {
     await this.fillUsername(credentials.username);
     await this.fillPassword(credentials.password);
     await this.clickLoginButton();
+    await this.page.waitForURL(/dashboard/);
   }
 
   async loginWithEmptyPassword(username: string): Promise<void> {
