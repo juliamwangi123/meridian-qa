@@ -15,6 +15,11 @@ test.describe('Login', () => {
     await loginPage.goto();
   });
 
+  /**
+   * @userStory MPS-001
+   * @type smoke
+   * @category authentication
+   */
   test('A user can log in with valid credentials', async ({ page }) => {
     await loginPage.login(loginUsers.validUser.credentials);
     // await expect(page).toHaveURL(/login/);
@@ -23,24 +28,41 @@ test.describe('Login', () => {
     await expect(dashboardPage.isLoaded()).resolves.toBe(true);
   });
 
+  /**
+   * @userStory MPS-001
+   * @category authentication
+   */
   test('A user cannot log in with invalid credentials', async () => {
     await loginPage.login(loginUsers.invalidUser.credentials);
     const error = await loginPage.getErrorMessage();
     expect(error).toBe(loginUsers.invalidUser.expectedError);
   });
 
+  /**
+   * @userStory MPS-001
+   * @category authentication
+   */
   test('A user cannot log in with an empty username', async () => {
     await loginPage.loginWithEmptyUsername(loginUsers.emptyUsername.credentials.password);
     const error = await loginPage.getUsernameValidationMessage();
     expect(error).toBe(loginUsers.emptyUsername.expectedError);
   });
 
+  /**
+   * @userStory MPS-001
+   * @category authentication
+   */
   test('A user cannot log in with an empty password', async () => {
     await loginPage.loginWithEmptyPassword(loginUsers.emptyPassword.credentials.username);
     const error = await loginPage.getPasswordValidationMessage();
     expect(error).toBe(loginUsers.emptyPassword.expectedError);
   });
 
+  /**
+   * @userStory MPS-001
+   * @type smoke
+   * @category authentication
+   */
   test('A logged-in user can log out successfully', async ({ page }) => {
     await loginPage.login(loginUsers.validUser.credentials);
     // await expect(page).toHaveURL(/dashboard/);

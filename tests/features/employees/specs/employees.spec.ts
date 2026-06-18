@@ -19,17 +19,30 @@ test.describe('Employees', () => {
     await employeePage.goto();
   });
 
+  /**
+   * @userStory MPS-003
+   * @type smoke
+   * @category employees
+   */
   test('An admin can view the employee list', async () => {
     const count = await employeePage.getEmployeeListCount();
     expect(count).toBeGreaterThan(0);
   });
 
+  /**
+   * @userStory MPS-003
+   * @category employees
+   */
   test('An admin can search for an employee by name', async () => {
     await employeePage.searchByName(employeeData.existingEmployee.name);
     const result = await employeePage.getFirstResultText();
     expect(result).toContain(employeeData.existingEmployee.name);
   });
 
+  /**
+   * @userStory MPS-003
+   * @category employees
+   */
   test('An admin can navigate to an individual employee profile', async ({ page }) => {
     await employeePage.searchByName(employeeData.existingEmployee.name);
     await employeePage.clickFirstEmployeeRow();

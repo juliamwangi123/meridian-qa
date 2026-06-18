@@ -18,11 +18,20 @@ test.describe('Dashboard', () => {
         await dashboardPage.goto();
     });
 
+    /**
+     * @userStory MPS-002
+     * @type smoke
+     * @category dashboard
+     */
     test('Dashboard page should load successfully', async () => {
         const isLoaded = await dashboardPage.isLoaded();
         expect(isLoaded).toBe(true);
     });
 
+    /**
+     * @userStory MPS-002
+     * @category dashboard
+     */
     test('is user logged in', async () => {
        const isLoaded = await dashboardPage.isLoaded();
        expect(isLoaded).toBe(true);

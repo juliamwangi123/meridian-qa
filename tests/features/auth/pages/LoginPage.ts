@@ -54,6 +54,7 @@ export class LoginPage {
     await this.fillUsername(credentials.username);
     await this.fillPassword(credentials.password);
     await this.clickLoginButton();
+    await this.page.waitForLoadState('networkidle');
   }
 
   async loginWithEmptyPassword(username: string): Promise<void> {

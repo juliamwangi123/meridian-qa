@@ -22,4 +22,10 @@ export const loginUsers: Record<string, TestUser> = {
     credentials: { username: 'Admin', password: '' },
     expectedError: 'Required',
   },
+  employeeCredentials: {
+    scenario: 'Valid employee credentials',
+    credentials: { username: 'jules', password: 'admin123' },
+  
+  },
+  
 };

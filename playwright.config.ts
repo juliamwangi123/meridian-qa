@@ -16,6 +16,10 @@ export default defineConfig({
     trace: 'on-first-retry',
     navigationTimeout: 60000,
     actionTimeout: 15000,
+    video: 'retain-on-failure',
+    launchOptions: {
+      slowMo: isCI ? 0 : 500,
+    },
   },
 
   projects: [
