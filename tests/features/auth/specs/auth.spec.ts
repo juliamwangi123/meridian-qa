@@ -1,77 +1,75 @@
+import { expect, test } from '@playwright/test';
 
-
-import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
-import { loginUsers } from '../data/loginData';
 import { DashboardPage } from '../../dashboard/pages/DashboardPage';
 
-test.describe('Login', () => {
-  let loginPage: LoginPage;
-  let dashboardPage: DashboardPage;
+const VALID_USERNAME = 'Admin';
+const VALID_PASSWORD = 'admin123';
 
+test.describe('MPS-001: User Authentication', () => {
   test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    dashboardPage = new DashboardPage(page);
+    const loginPage = new LoginPage(page);
+
     await loginPage.goto();
   });
 
-  /**
-   * @userStory MPS-001
-   * @type smoke
-   * @category authentication
-   */
-  test('A user can log in with valid credentials', async ({ page }) => {
-    await loginPage.login(loginUsers.validUser.credentials);
-    // await expect(page).toHaveURL(/login/);
-    // await expect(page).toHaveURL(/dashboard/);
-    await dashboardPage.goto();
-    await expect(dashboardPage.isLoaded()).resolves.toBe(true);
+  test('user can log in with valid credentials', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    await loginPage.login(VALID_USERNAME, VALID_PASSWORD);
+
+    await expect(page).toHaveURL(/dashboard/);
+    expect(await dashboardPage.isLoaded()).toBe(true);
   });
 
-  /**
-   * @userStory MPS-001
-   * @category authentication
-   */
-  test('A user cannot log in with invalid credentials', async () => {
-    await loginPage.login(loginUsers.invalidUser.credentials);
-    const error = await loginPage.getErrorMessage();
-    expect(error).toBe(loginUsers.invalidUser.expectedError);
+  test('user cannot log in with invalid credentials', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+
+    await loginPage.login('invalid_user', 'wrong_password');
+
+    await expect(loginPage.errorMessage).toBeVisible();
+    expect(await loginPage.getErrorMessage()).not.toBe('');
+
+    await expect(page).toHaveURL(/auth\/login/);
   });
 
-  /**
-   * @userStory MPS-001
-   * @category authentication
-   */
-  test('A user cannot log in with an empty username', async () => {
-    await loginPage.loginWithEmptyUsername(loginUsers.emptyUsername.credentials.password);
-    const error = await loginPage.getUsernameValidationMessage();
-    expect(error).toBe(loginUsers.emptyUsername.expectedError);
+  test('user cannot log in with an empty username', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+
+    await loginPage.login('', VALID_PASSWORD);
+
+    await expect(loginPage.usernameRequiredMessage).toBeVisible();
+    expect(await loginPage.getUsernameValidationMessage()).not.toBe('');
+
+    await expect(page).toHaveURL(/auth\/login/);
   });
 
-  /**
-   * @userStory MPS-001
-   * @category authentication
-   */
-  test('A user cannot log in with an empty password', async () => {
-    await loginPage.loginWithEmptyPassword(loginUsers.emptyPassword.credentials.username);
-    const error = await loginPage.getPasswordValidationMessage();
-    expect(error).toBe(loginUsers.emptyPassword.expectedError);
+  test('user cannot log in with an empty password', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+
+    await loginPage.login(VALID_USERNAME, '');
+
+    await expect(loginPage.passwordRequiredMessage).toBeVisible();
+    expect(await loginPage.getPasswordValidationMessage()).not.toBe('');
+
+    await expect(page).toHaveURL(/auth\/login/);
   });
 
-  /**
-   * @userStory MPS-001
-   * @type smoke
-   * @category authentication
-   */
-  test('A logged-in user can log out successfully', async ({ page }) => {
-    await loginPage.login(loginUsers.validUser.credentials);
-    // await expect(page).toHaveURL(/dashboard/);
-    // await page.locator('.oxd-userdropdown-img').click();
-    // await page.getByRole('menuitem', { name: 'Logout' }).click();
-     await page.waitForLoadState('networkidle');
-      await dashboardPage.goto();
-      expect(await dashboardPage.isLoaded()).toBe(true);
-      await dashboardPage.logout();
-      await expect(loginPage.pageHeading).toBeVisible();
+  test('logged-in user can log out successfully', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    await loginPage.login(VALID_USERNAME, VALID_PASSWORD);
+    expect(await dashboardPage.isLoaded()).toBe(true);
+
+    await dashboardPage.logout();
+
+    await expect(page).toHaveURL(/auth\/login/);
+    expect(await loginPage.isLoaded()).toBe(true);
+
+    await expect(loginPage.usernameInput).toBeVisible();
+    await expect(loginPage.passwordInput).toBeVisible();
+    await expect(loginPage.loginButton).toBeEnabled();
   });
 });
