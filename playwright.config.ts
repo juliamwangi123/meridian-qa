@@ -16,11 +16,14 @@ export default defineConfig({
     trace: 'on-first-retry',
     navigationTimeout: 60000,
     actionTimeout: 15000,
+    // Record videos only on test failure for debugging in CI pipeline
     video: 'retain-on-failure',
     launchOptions: {
       slowMo: isCI ? 0 : 500,
     },
   },
+  
+  outputDir: 'test-results',
 
   projects: [
     {
